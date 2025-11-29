@@ -1,8 +1,7 @@
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
-const server = http.createServer((req, res) => {
+export default function handler(req, res) {
   let file = "404.html";
 
   if (req.url === "/") file = "index.html";
@@ -10,7 +9,7 @@ const server = http.createServer((req, res) => {
   else if (req.url === "/contact-me") file = "contact-me.html";
   else if (req.url === "/styles.css") file = "styles.css";
 
-  const filePath = path.join(__dirname, file);
+  const filePath = path.join(process.cwd(), file);
   const ext = path.extname(filePath);
 
   let type = "text/html";
@@ -18,18 +17,11 @@ const server = http.createServer((req, res) => {
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      const notFound = path.join(__dirname, "404.html");
-      return fs.readFile(notFound, (_, nf) => {
-        res.writeHead(404, { "Content-Type": "text/html" });
-        res.end(nf);
+      return fs.readFile(path.join(process.cwd(), "404.html"), (_, nf) => {
+        res.status(404).send(nf.toString());
       });
     }
-
-    res.writeHead(200, { "Content-Type": type });
-    res.end(data);
+    res.setHeader("Content-Type", type);
+    res.status(200).send(data.toString());
   });
-});
-
-server.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
-});
+}
