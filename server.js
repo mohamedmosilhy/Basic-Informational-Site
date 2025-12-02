@@ -5,10 +5,10 @@ const path = require("path");
 const server = http.createServer((req, res) => {
   let file = "404.html";
 
-  if (req.url === "/") file = "index.html";
-  else if (req.url === "/about") file = "about.html";
-  else if (req.url === "/contact-me") file = "contact-me.html";
-  else if (req.url === "/styles.css") file = "styles.css";
+  if (req.url === "/") file = "./views/index.html";
+  else if (req.url === "/about") file = "./views/about.html";
+  else if (req.url === "/contact-us") file = "./views/contact-us.html";
+  else if (req.url === "/styles.css") file = "./public/styles.css";
 
   const filePath = path.join(__dirname, file);
   const ext = path.extname(filePath);
@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      const notFound = path.join(__dirname, "404.html");
+      const notFound = path.join(__dirname, "./views/404.html");
       return fs.readFile(notFound, (_, nf) => {
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(nf);
